@@ -1,0 +1,13 @@
+{
+  "name": "habanero/broil",
+  "description": "Routing library for PHP",
+  "authors": [{
+    "name":"Alvaro Cabrera"
+  }],
+  "require": {
+    "php": ">=5.3"
+  },
+  "autoload": {
+    "psr-0": {"Broil": "lib/"}
+  }
+}
