@@ -52,7 +52,7 @@ class Routing
       $params = static::$map[$for];
       $params['action'] = $params['match'];
     } else {
-      $params['action'] = strtr($for, '_', '/');
+      $params['action'] = strtr("_$for", '_', '/');
     }
 
     $out = Helpers::build($params);
