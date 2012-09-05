@@ -17,13 +17,13 @@ class Routing
       'constraints' => array(),
       'before'      => array(),
       'after'       => array(),
-      'match'       => '/',
+      'match'       => '/*any',
       'root'        => '/',
       'to'          => '',
     ), $params, $test);
 
 
-    $params['match'] = $params['root'] . rtrim($params['match'], '/');
+    ($params['root'] <> '/') && $params['match'] = $params['root'] . rtrim($params['match'], '/');
 
     if ( ! empty($params['path'])) {
       $test = array();
