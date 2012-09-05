@@ -5,6 +5,18 @@ namespace Broil;
 class Helpers
 {
 
+  private static $tokens = array(
+                    // escapes
+                    '/\//' => '\\/',
+                    '/\((?!\?)/' => '(?:',
+                    '/\.(?![+*?])/' => '\\.',
+                    // captures
+                    '/(?<!\?)\*([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>.*)',
+                    '/(?<!\?):([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>[%\w+-]+)',
+                  );
+
+
+
   public static function build($url, array $params = array()) {
     if (is_array($url)) {
       $params = array_merge($url, $params);
@@ -73,26 +85,16 @@ class Helpers
   }
 
   public static function compile($expr, array $constraints = array()) {
-    static $tokens = array(
-              '/\//' => '\\/',
-              '/\(/' => '(?:',
-               '/\)/' => '|)',
-              '/\*([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>.+?)',
-              '/:([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>[^\/#&?]+?)',
-            );
-
-
-    $expr = preg_replace(array_keys($tokens), array_values($tokens), $expr);
-
     if (is_array($constraints)) {
       $test = array();
 
       foreach ($constraints as $key => $value) {
         $item  = preg_replace('/\W/', '', $key);
-        $value = str_replace('/', '\\/', $value);
         $expr  = str_replace($key, $item ? "(?<$item>$value)" : $value, $expr);
       }
     }
+
+    $expr = preg_replace(array_keys(static::$tokens), array_values(static::$tokens), $expr);
 
     return $expr;
   }
