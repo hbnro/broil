@@ -8,7 +8,7 @@ Broil\Config::set('request_uri', '/foo/fuck-yeah12');
 Broil\Config::set('request_method', 'POST');
 
 Broil\Routing::add('GET', '/', 'callback', array('path' => 'home'));
-Broil\Routing::add('POST', '/foo(/:candy+id(/*bar)?)?', function () {
+Broil\Routing::add('POST', '/foo(/:candy+id(/*bar))', function () {
     echo 'OK';
   }, array(
       'path' => 'bar',
