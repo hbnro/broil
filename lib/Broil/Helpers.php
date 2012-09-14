@@ -7,8 +7,9 @@ class Helpers
 
   private static $tokens = array(
                     // escapes
+                    '/\)/' => ')?',
+                    '/\(/' => '(?:',
                     '/\//' => '\\/',
-                    '/\((?!\?)/' => '(?:',
                     '/\.(?![+*?])/' => '\\.',
                     // captures
                     '/(?<!\?)\*([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>.*)',
@@ -85,6 +86,8 @@ class Helpers
   }
 
   public static function compile($expr, array $constraints = array()) {
+    $expr = preg_replace(array_keys(static::$tokens), array_values(static::$tokens), $expr);
+
     if (is_array($constraints)) {
       $test = array();
 
@@ -93,8 +96,6 @@ class Helpers
         $expr  = str_replace($key, $item ? "(?<$item>$value)" : $value, $expr);
       }
     }
-
-    $expr = preg_replace(array_keys(static::$tokens), array_values(static::$tokens), $expr);
 
     return $expr;
   }
