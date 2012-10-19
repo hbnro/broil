@@ -93,7 +93,7 @@ class Helpers
 
       foreach ($constraints as $key => $value) {
         $item  = preg_replace('/\W/', '', $key);
-        $expr  = str_replace($key, $item ? "(?<$item>$value)" : $value, $expr);
+        $expr  = str_replace($key, $item ? "(?<$item>$value)" : str_replace('/', '\\/', $value), $expr);
       }
     }
 
