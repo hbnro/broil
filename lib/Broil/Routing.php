@@ -23,7 +23,8 @@ class Routing
     ), $params, $test);
 
 
-    $params['match'] = join('/', array($params['root'], trim($params['match'], '/')));
+    $parts = array($params['root'], trim($params['match'], '/'));
+    $params['match'] = join('/', array_filter($parts));
 
     if ( ! empty($params['path'])) {
       $test = array();
