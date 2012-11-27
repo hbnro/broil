@@ -17,13 +17,13 @@ class Routing
       'constraints' => array(),
       'before'      => array(),
       'after'       => array(),
-      'match'       => '/*any',
+      'match'       => '*any',
       'root'        => '/',
       'to'          => '',
     ), $params, $test);
 
 
-    ($params['root'] <> '/') && $params['match'] = $params['root'] . rtrim($params['match'], '/');
+    $params['match'] = join('/', array($params['root'], trim($params['match'], '/')));
 
     if ( ! empty($params['path'])) {
       $test = array();
@@ -33,7 +33,6 @@ class Routing
       }
 
       static::$map[$params['path']] = $test;
-      unset($params['path']);
     }
 
     if ( ! isset(static::$routes[$method])) {
@@ -104,6 +103,11 @@ class Routing
       // TODO: raise exception
     }
     // TODO: raise exception
+  }
+
+  public static function all()
+  {
+    return static::$routes;
   }
 
 }
