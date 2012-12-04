@@ -23,7 +23,7 @@ class Routing
     ), $params, $test);
 
 
-    $params['match'] = preg_replace('/\/{2,}/', '/', rtrim("$params[root]$params[match]", '/'));
+    $params['match'] = preg_replace('/\/{2,}/', '/', "$params[root]$params[match]");
 
     if ( ! empty($params['path'])) {
       $test = array();
