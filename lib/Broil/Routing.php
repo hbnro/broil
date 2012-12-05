@@ -63,6 +63,7 @@ class Routing
 
     do {
       $tmp = $out;
+      $out = preg_replace('/(?<!:)\/{2,}/', '/', $out);
       $out = preg_replace('/\([^()]*?\)|\/?\*\w+/', '', $out);
     } while($tmp <> $out);
 
