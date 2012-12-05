@@ -29,31 +29,24 @@ class Helpers
       'action' => '',
       'anchor' => '',
       'locals' => array(),
-      'host'   => FALSE,
     ), $params);
 
 
+    $root   = \Broil\Config::get('root');
+    $index  = \Broil\Config::get('index_file');
+    $server = \Broil\Config::get('server_base');
+
     if (isset($params['subdomain'])) {
-      $domain    = Config::get('domain');
-      $subdomain = Config::get('subdomain');
+      $domain    = \Broil\Config::get('domain');
+      $subdomain = \Broil\Config::get('subdomain');
 
-      @list($sub_test) = explode($domain, Config::get('server_name'));
-
-      $host = "//$domain";
-      $test = $params['subdomain'] ?: $subdomain;
-
-      $test && $host = str_replace('//', "//$test.", $host);
-
-      $params['host'] = $host;
+      $sub = $params['subdomain'] ?: $subdomain;
+      $sub && $server = str_replace("//$domain", "//$sub.$domain", $server);
     }
 
 
-    $root    = Config::get('root');
-    $index   = Config::get('index_file');
-    $rewrite = (boolean) Config::get('rewrite');
-
-    $base    = $params['host'] ? $params['host'] . $root : $root;
-    $link    = $base . $index;
+    $rewrite = (boolean) \Broil\Config::get('rewrite');
+    $link    = "$server$root$index";
 
     $anchor  =
     $query   = '';
