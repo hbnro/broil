@@ -14,7 +14,7 @@ class Config
                     'request_uri' => '/',
                     'request_method' => 'GET',
                     // about server
-                    'server_name' => '',
+                    'server_base' => '',
                     'subdomain' => '',
                     'domain' => '',
                   );
