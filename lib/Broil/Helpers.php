@@ -18,7 +18,8 @@ class Helpers
 
 
 
-  public static function build($url, array $params = array()) {
+  public static function build($url, array $params = array())
+  {
     if (is_array($url)) {
       $params = array_merge($url, $params);
     } elseif ( ! isset($params['action'])) {
@@ -29,6 +30,7 @@ class Helpers
       'action' => '',
       'anchor' => '',
       'locals' => array(),
+      'static' => FALSE,
     ), $params);
 
 
@@ -45,40 +47,43 @@ class Helpers
     }
 
 
-    $rewrite = (boolean) \Broil\Config::get('rewrite');
-    $link    = "$server$root$index";
+    if ($params['static']) {
+      return "$server$root$params[action]";
+    } else {
+      $anchor  =
+      $query   = '';
+      $link    = "$server$root$index";
 
-    $anchor  =
-    $query   = '';
+      if ( ! empty($params['action'])) {
+        @list($part, $anchor) = explode('#', $params['action']);
+        @list($part, $query)  = explode('?', $part);
 
-    if ( ! empty($params['action'])) {
-      @list($part, $anchor) = explode('#', $params['action']);
-      @list($part, $query)  = explode('?', $part);
+        $link .= $part;
+      }
 
-      $link .= $part;
+      if ( ! empty($params['locals'])) {
+        $test = array();
+        $hash = uniqid('__PREFIX__');
+
+        parse_str($query, $test);
+
+        $query = http_build_query(array_merge($test, $params['locals']), $hash, '&amp;');
+        $query = preg_replace("/{$hash}\d+=/", '', $query);
+      }
+
+      \Broil\Config::get('rewrite') && $link = str_replace("$index/", '', $link);
+
+      $params['anchor'] && $anchor = $params['anchor'];
+
+      $link .= $query ? "?$query" : '';
+      $link .= $anchor ? "#$anchor" : '';
+
+      return $link;
     }
-
-    if ( ! empty($params['locals'])) {
-      $test = array();
-      $hash = uniqid('__PREFIX__');
-
-      parse_str($query, $test);
-
-      $query = http_build_query(array_merge($test, $params['locals']), $hash, '&amp;');
-      $query = preg_replace("/{$hash}\d+=/", '', $query);
-    }
-
-    $rewrite && $link = str_replace("$index/", '', $link);
-
-    $params['anchor'] && $anchor = $params['anchor'];
-
-    $link .= $query ? "?$query" : '';
-    $link .= $anchor ? "#$anchor" : '';
-
-    return $link;
   }
 
-  public static function compile($expr, array $constraints = array()) {
+  public static function compile($expr, array $constraints = array())
+  {
     $expr = preg_replace(array_keys(static::$tokens), array_values(static::$tokens), $expr);
 
     if (is_array($constraints)) {
