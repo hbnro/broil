@@ -10,7 +10,8 @@ class Routing
   private static $grouped = array();
 
 
-  public static function add($method, $match, $to, array $params = array()) {
+  public static function add($method, $match, $to, array $params = array())
+  {
     $params = array_merge(compact('match', 'to'), $params);
     $test   = end(static::$grouped) ?: array();
     $params = array_merge(array(
@@ -42,12 +43,14 @@ class Routing
     static::$routes[$method] []= $params;
   }
 
-  public static function mount(\Closure $group, array $params = array()) {
+  public static function mount(\Closure $group, array $params = array())
+  {
     (static::$grouped []= $params) && $group();
     array_pop(static::$grouped);
   }
 
-  public static function path($for, array $vars = array()) {
+  public static function path($for, array $vars = array())
+  {
     if ( ! empty(static::$map[$for])) {
       $params = static::$map[$for];
       $params['action'] = $params['match'];
@@ -55,7 +58,7 @@ class Routing
       $params['action'] = strtr("_$for", '_', '/');
     }
 
-    $out = Helpers::build($params);
+    $out = \Broil\Helpers::build($params);
     $out = strtr($out, $vars);
 
     do {
@@ -67,19 +70,24 @@ class Routing
   }
 
   public static function run() {
-    $domain      = Config::get('domain');
-    $subdomain   = Config::get('subdomain');
-    $server_name = Config::get('server_name');
+    $domain      = \Broil\Config::get('domain');
+    $subdomain   = \Broil\Config::get('subdomain');
+    $server_name = \Broil\Config::get('server_name');
 
-    @list($sub_test) = explode($domain, $server_name);
+    $route   = \Broil\Config::get('request_uri');
+    $method  = \Broil\Config::get('request_method');
 
-    $route   = Config::get('request_uri');
-    $method  = Config::get('request_method');
+
+    $sub_test = FALSE;
+
+    if ($domain) {
+      @list($sub_test) = explode($domain, $server_name);
+    }
 
 
     if ( ! empty(static::$routes[$method])) {
       foreach (static::$routes[$method] as $params) {
-        if (isset($params['subdomain'])) {
+        if ($sub_test && isset($params['subdomain'])) {
           $test = $params['subdomain'] ?: $subdomain;
           if ($test <> trim($sub_test, '.')) {
             continue;
@@ -87,7 +95,7 @@ class Routing
         }
 
 
-        $regex = Helpers::compile($params['match'], $params['constraints']);
+        $regex = \Broil\Helpers::compile($params['match'], $params['constraints']);
 
         if (preg_match("/^$regex$/", $route, $matches)) {
           $vars = array();
@@ -100,10 +108,9 @@ class Routing
           return $params;
         }
       }
-    } else {
-      // TODO: raise exception
     }
-    // TODO: raise exception
+
+    throw new \Exception("Route '$method $route' not found");
   }
 
   public static function all()
