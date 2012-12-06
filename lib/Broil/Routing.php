@@ -55,7 +55,7 @@ class Routing
       $params = static::$map[$for];
       $params['action'] = $params['match'];
     } else {
-      $params['action'] = strtr("_$for", '_', '/');
+      $params['action'] = "/$for";
     }
 
     $out = \Broil\Helpers::build($params);
