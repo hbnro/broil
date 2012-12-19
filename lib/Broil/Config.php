@@ -15,8 +15,7 @@ class Config
                     'request_method' => 'GET',
                     // about server
                     'server_base' => '',
-                    'subdomain' => '',
-                    'domain' => '',
+                    'tld_size' => 0,
                   );
 
 
