@@ -26,33 +26,28 @@ class Helpers
       $params['action'] = $url;
     }
 
-    $params  = array_merge(array(
+    $params = array_merge(array(
       'action' => '',
       'anchor' => '',
-      'locals' => array(),
       'static' => FALSE,
+      'locals' => array(),
     ), $params);
-
 
     $root   = \Broil\Config::get('root');
     $index  = \Broil\Config::get('index_file');
     $server = \Broil\Config::get('server_base');
 
     if (isset($params['subdomain'])) {
-      $domain    = \Broil\Config::get('domain');
-      $subdomain = \Broil\Config::get('subdomain');
-
-      $sub = $params['subdomain'] ?: $subdomain;
-      $sub && $server = str_replace("//$domain", "//$sub.$domain", $server);
+      $server = static::reduce($server, $params['subdomain']);
     }
 
 
     if ($params['static']) {
       return "$server$root$params[action]";
     } else {
-      $anchor  =
-      $query   = '';
-      $link    = "$server$root$index";
+      $anchor =
+      $query  = '';
+      $link   = "$server$root$index";
 
       if ( ! empty($params['action'])) {
         @list($part, $anchor) = explode('#', $params['action']);
@@ -97,6 +92,22 @@ class Helpers
     }
 
     return $expr;
+  }
+
+  public static function reduce($host, $sub = FALSE)
+  {
+    @list(,, $base) = explode('/', $host);
+
+    if ($base) {
+      $set = explode('.', $base);
+      $max = \Broil\Config::get('tld_size');
+
+      $set = array_slice($set, -($max + 1));
+      $sub && array_unshift($set, $sub);
+
+      $host = str_replace($base, join('.', $set), $host);
+    }
+    return $host;
   }
 
 }

@@ -9,6 +9,8 @@ class Routing
   private static $routes = array();
   private static $grouped = array();
 
+  private static $allowed = array('anchor', 'static', 'locals', 'subdomain');
+
 
   public static function add($method, $match, $to, array $params = array())
   {
@@ -58,6 +60,15 @@ class Routing
       $params['action'] = "/$for";
     }
 
+
+    foreach (static::$allowed as $key) {
+      if (array_key_exists($key, $vars)) {
+        $params[$key] = $vars[$key];
+        unset($vars[$key]);
+      }
+    }
+
+
     $out = \Broil\Helpers::build($params);
     $out = strtr($out, $vars);
 
@@ -70,29 +81,39 @@ class Routing
     return $out;
   }
 
-  public static function run() {
-    $domain      = \Broil\Config::get('domain');
-    $subdomain   = \Broil\Config::get('subdomain');
-    $server_name = \Broil\Config::get('server_name');
+  public static function sub()
+  {
+    @list(,, $base) = explode('/', \Broil\Config::get('server_base'));
 
-    $route   = \Broil\Config::get('request_uri');
-    $method  = \Broil\Config::get('request_method');
+    if ($base) {
+      $max = \Broil\Config::get('tld_size');
+      $set = explode('.', $base);
 
+      $old = array_slice($set, -($max + 1));
+      $new = array_diff($set, $old);
 
-    $sub_test = FALSE;
+      return join('.', $new);
+    }
+    return FALSE;
+  }
 
-    if ($domain) {
-      @list($sub_test) = explode($domain, $server_name);
+  public static function run()
+  {
+    $method = \Broil\Config::get('request_method');
+    $route  = \Broil\Config::get('request_uri');
+
+    if (($test = static::sub()) !== FALSE) {
+      $sub = $test;
     }
 
 
+    // TODO: do testing please...
     if ( ! empty(static::$routes[$method])) {
       foreach (static::$routes[$method] as $params) {
-        if ($sub_test && isset($params['subdomain'])) {
-          $test = $params['subdomain'] ?: $subdomain;
-          if ($test <> trim($sub_test, '.')) {
-            continue;
-          }
+        if (isset($sub, $params['subdomain'])) {
+         if ($sub <> $params['subdomain']) {
+           continue;
+         }
         }
 
 
