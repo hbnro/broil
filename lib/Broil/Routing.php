@@ -20,6 +20,7 @@ class Routing
       'constraints' => array(),
       'before'      => array(),
       'after'       => array(),
+      'subdomain'   => '',
       'match'       => '*any',
       'root'        => '/',
       'to'          => '',
@@ -110,10 +111,8 @@ class Routing
     // TODO: do testing please...
     if ( ! empty(static::$routes[$method])) {
       foreach (static::$routes[$method] as $params) {
-        if (isset($sub, $params['subdomain'])) {
-         if ($sub <> $params['subdomain']) {
-           continue;
-         }
+        if (isset($sub) && ($sub <> $params['subdomain'])) {
+          continue;
         }
 
 
