@@ -39,7 +39,7 @@ class Helpers
     $server = \Broil\Config::get('server_base');
 
     if (isset($params['subdomain'])) {
-      $prefix = isset($params['prefix']) ? $params['prefix'] : $params['subdomain'];
+      $prefix = ! empty($params['prefix']) ? $params['prefix'] : $params['subdomain'];
       $server = static::reduce($server, $prefix);
     }
 
