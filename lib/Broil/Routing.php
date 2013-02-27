@@ -104,14 +104,13 @@ class Routing
     $route  = \Broil\Config::get('request_uri');
 
     if (($test = static::sub()) !== FALSE) {
-      $sub = $test === 'www' ? '' : $test;
+      $sub = $test;
     }
 
 
-    // TODO: do testing please...
     if ( ! empty(static::$routes[$method])) {
       foreach (static::$routes[$method] as $params) {
-        if (isset($sub) && ($sub <> $params['subdomain']) && ($params['subdomain'] <> '*')) {
+        if (isset($sub) && ! @preg_match("/^$params[subdomain]$/i", $sub)) {
           continue;
         }
 
