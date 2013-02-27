@@ -9,7 +9,7 @@ class Routing
   private static $routes = array();
   private static $grouped = array();
 
-  private static $allowed = array('anchor', 'static', 'locals', 'subdomain');
+  private static $allowed = array('anchor', 'static', 'locals', 'prefix', 'subdomain');
 
 
   public static function add($method, $match, $to, array $params = array())
@@ -21,6 +21,7 @@ class Routing
       'before'      => array(),
       'after'       => array(),
       'subdomain'   => '',
+      'prefix'      => '',
       'match'       => '*any',
       'root'        => '/',
       'to'          => '',
@@ -33,7 +34,7 @@ class Routing
     if ( ! empty($params['path'])) {
       $test = array();
 
-      foreach (array('match', 'subdomain') as $key) {
+      foreach (array('match', 'prefix', 'subdomain') as $key) {
         isset($params[$key]) && $test[$key] = $params[$key];
       }
 

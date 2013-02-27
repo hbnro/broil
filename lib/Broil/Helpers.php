@@ -29,6 +29,7 @@ class Helpers
     $params = array_merge(array(
       'action' => '',
       'anchor' => '',
+      'prefix' => '',
       'static' => FALSE,
       'locals' => array(),
     ), $params);
@@ -38,7 +39,8 @@ class Helpers
     $server = \Broil\Config::get('server_base');
 
     if (isset($params['subdomain'])) {
-      $server = static::reduce($server, $params['subdomain']);
+      $prefix = isset($params['prefix']) ? $params['prefix'] : $params['subdomain'];
+      $server = static::reduce($server, $prefix);
     }
 
 
