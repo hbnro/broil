@@ -111,7 +111,7 @@ class Routing
 
     if ( ! empty(static::$routes[$method])) {
       foreach (static::$routes[$method] as $params) {
-        if (isset($sub) && ! @preg_match("/^$params[subdomain]$/i", $sub)) {
+        if (isset($sub) && ! @preg_match("/^(?:$params[subdomain])$/i", $sub)) {
           continue;
         }
 
