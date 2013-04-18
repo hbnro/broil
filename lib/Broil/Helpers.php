@@ -16,8 +16,6 @@ class Helpers
                     '/(?<!\?):([a-z_][a-z\d_]*?)(?=\b)/i' => '(?<\\1>[%\w+-]+)',
                   );
 
-
-
   public static function build($url, array $params = array())
   {
     if (is_array($url)) {
@@ -42,7 +40,6 @@ class Helpers
       $prefix = ! empty($params['prefix']) ? $params['prefix'] : $params['subdomain'];
       $server = static::reduce($server, $prefix);
     }
-
 
     if ($params['static']) {
       return "$server$root$params[action]";
@@ -109,6 +106,7 @@ class Helpers
 
       $host = str_replace($base, join('.', $set), $host);
     }
+
     return $host;
   }
 

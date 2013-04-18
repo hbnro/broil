@@ -18,8 +18,6 @@ class Config
                     'tld_size' => 0,
                   );
 
-
-
   public static function set($key, $value = NULL)
   {
     static::$bag[$key] = $value;

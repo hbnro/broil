@@ -11,7 +11,6 @@ class Routing
 
   private static $allowed = array('anchor', 'static', 'locals', 'prefix', 'subdomain');
 
-
   public static function add($method, $match, $to, array $params = array())
   {
     $params = array_merge(compact('match', 'to'), $params);
@@ -26,7 +25,6 @@ class Routing
       'root'        => '/',
       'to'          => '',
     ), $params, $test);
-
 
     $params['match'] = $params['root'] . rtrim($params['match'], '/');
     $params['match'] = preg_replace('/\/{2,}/', '/', $params['match']);
@@ -62,14 +60,12 @@ class Routing
       $params['action'] = "/$for";
     }
 
-
     foreach (static::$allowed as $key) {
       if (array_key_exists($key, $vars)) {
         $params[$key] = $vars[$key];
         unset($vars[$key]);
       }
     }
-
 
     $out = \Broil\Helpers::build($params);
     $out = strtr($out, $vars);
@@ -78,7 +74,7 @@ class Routing
       $tmp = $out;
       $out = preg_replace('/(?<!:)\/{2,}/', '/', $out);
       $out = preg_replace('/\([^()]*?\)|\/?\*\w+/', '', $out);
-    } while($tmp <> $out);
+    } while ($tmp <> $out);
 
     return $out;
   }
@@ -96,6 +92,7 @@ class Routing
 
       return join('.', $new);
     }
+
     return FALSE;
   }
 
@@ -108,13 +105,11 @@ class Routing
       $sub = $test;
     }
 
-
     if ( ! empty(static::$routes[$method])) {
       foreach (static::$routes[$method] as $params) {
         if (isset($sub) && ! @preg_match("/^(?:$params[subdomain])$/i", $sub)) {
           continue;
         }
-
 
         $regex = \Broil\Helpers::compile($params['match'], $params['constraints']);
 
@@ -126,6 +121,7 @@ class Routing
           }
 
           $params['params'] = $vars;
+
           return $params;
         }
       }
